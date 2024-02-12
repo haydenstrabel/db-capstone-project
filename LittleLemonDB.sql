@@ -18,31 +18,29 @@ CREATE SCHEMA IF NOT EXISTS `littlelemondb` DEFAULT CHARACTER SET utf8mb3 ;
 USE `littlelemondb` ;
 
 -- -----------------------------------------------------
--- Table `littlelemondb`.`customers`
+-- Table `littlelemondb`.`bookings`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `littlelemondb`.`customers` (
-  `CustomerID` INT NOT NULL,
-  `CustomerName` VARCHAR(45) NULL DEFAULT NULL,
-  `ContactDetails` VARCHAR(45) NULL DEFAULT NULL,
-  PRIMARY KEY (`CustomerID`))
+CREATE TABLE IF NOT EXISTS `littlelemondb`.`bookings` (
+  `BookingID` INT NOT NULL AUTO_INCREMENT,
+  `TableNumber` INT NULL DEFAULT NULL,
+  `CustomerID` INT NULL,
+  `BookingDate` DATE NULL,
+  PRIMARY KEY (`BookingID`))
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8mb3;
 
 
 -- -----------------------------------------------------
--- Table `littlelemondb`.`bookings`
+-- Table `littlelemondb`.`customers`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `littlelemondb`.`bookings` (
-  `BookingID` INT AUTO_INCREMENT PRIMARY KEY,
-  `Date` DATE NULL DEFAULT NULL,
-  `TableNumber` INT NULL DEFAULT NULL,
-  `CustomerID` INT NULL,
-  INDEX `CustomerID_idx` (`CustomerID` ASC) VISIBLE,
-  CONSTRAINT `CustomerID`
-    FOREIGN KEY (`CustomerID`)
-    REFERENCES `littlelemondb`.`customers` (`CustomerID`)
-    ON DELETE CASCADE
-    ON UPDATE CASCADE)
+CREATE TABLE IF NOT EXISTS `littlelemondb`.`customers` (
+  `CustomerID` INT NOT NULL,
+  `CustomerName` VARCHAR(45) NULL DEFAULT NULL,
+  `City` VARCHAR(45) NULL DEFAULT NULL,
+  `Country` VARCHAR(45) NULL,
+  `CountryCode` VARCHAR(45) NULL,
+  `PostalCode` VARCHAR(45) NULL,
+  PRIMARY KEY (`CustomerID`))
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8mb3;
 
@@ -53,8 +51,9 @@ DEFAULT CHARACTER SET = utf8mb3;
 CREATE TABLE IF NOT EXISTS `littlelemondb`.`menuitems` (
   `ItemID` INT NOT NULL,
   `CourseName` VARCHAR(255) NULL DEFAULT NULL,
-  `StarterName` INT NULL DEFAULT NULL,
   `DesertName` VARCHAR(45) NULL DEFAULT NULL,
+  `Drink` VARCHAR(45) NULL DEFAULT NULL,
+  `Sides` VARCHAR(255) NULL DEFAULT NULL,
   PRIMARY KEY (`ItemID`))
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8mb3;
@@ -65,8 +64,7 @@ DEFAULT CHARACTER SET = utf8mb3;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `littlelemondb`.`menu` (
   `MenuID` INT NOT NULL,
-  `MenuName` VARCHAR(45) NULL DEFAULT NULL,
-  `Cuisine` VARCHAR(45) NULL DEFAULT NULL,
+  `CuisineName` VARCHAR(45) NULL DEFAULT NULL,
   `ItemID` INT NULL DEFAULT NULL,
   PRIMARY KEY (`MenuID`),
   INDEX `ItemID_idx` (`ItemID` ASC) VISIBLE,
@@ -84,8 +82,7 @@ DEFAULT CHARACTER SET = utf8mb3;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `littlelemondb`.`orderdeliverystatus` (
   `DeliveryID` INT NOT NULL,
-  `DeliveryDate` DATE NULL DEFAULT NULL,
-  `Status` VARCHAR(45) NULL DEFAULT NULL,
+  `DeliveryCost` DECIMAL NULL DEFAULT NULL,
   PRIMARY KEY (`DeliveryID`))
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8mb3;
@@ -96,18 +93,19 @@ DEFAULT CHARACTER SET = utf8mb3;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `littlelemondb`.`orders` (
   `OrderID` INT NOT NULL,
-  `OrderDate` DATE NULL DEFAULT NULL,
   `Quantity` INT NULL DEFAULT NULL,
-  `TotalCost` DECIMAL(10,0) NULL DEFAULT NULL,
+  `Cost` DECIMAL(10,0) NULL DEFAULT NULL,
   `DeliveryID` INT NULL DEFAULT NULL,
   `BookingID` INT NULL DEFAULT NULL,
-  `CustomerID` INT NULL DEFAULT NULL,
-  `MenuID` INT NOT NULL,
+  `MenuID` INT NULL,
+  `Sales` DECIMAL NULL,
+  `CustomerID` INT NULL,
+  `Discount` DECIMAL NULL,
   PRIMARY KEY (`OrderID`),
   INDEX `DeliveryID_idx` (`DeliveryID` ASC) VISIBLE,
   INDEX `BookingID_idx` (`BookingID` ASC) VISIBLE,
-  INDEX `CustomerID_idx` (`CustomerID` ASC) VISIBLE,
   INDEX `MenuID_idx` (`MenuID` ASC) VISIBLE,
+  INDEX `CustomerID_idx1` (`CustomerID` ASC) VISIBLE,
   CONSTRAINT `BookingID`
     FOREIGN KEY (`BookingID`)
     REFERENCES `littlelemondb`.`bookings` (`BookingID`)
@@ -121,6 +119,11 @@ CREATE TABLE IF NOT EXISTS `littlelemondb`.`orders` (
   CONSTRAINT `MenuID`
     FOREIGN KEY (`MenuID`)
     REFERENCES `littlelemondb`.`menu` (`MenuID`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+  CONSTRAINT `CustomerID`
+    FOREIGN KEY (`CustomerID`)
+    REFERENCES `littlelemondb`.`customers` (`CustomerID`)
     ON DELETE CASCADE
     ON UPDATE CASCADE)
 ENGINE = InnoDB

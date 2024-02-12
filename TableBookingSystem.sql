@@ -1,7 +1,7 @@
 USE LittleLemonDB;
 
 /* Task 1 */
-INSERT INTO Customers (CustomerID, CustomerName) VAlues
+/* INSERT INTO Customers (CustomerID, CustomerName) VAlues
 	(1, "Jack Reacher"),
     (2, "Jane Doe"),
     (3, "Bonnie Clyde");
@@ -12,18 +12,18 @@ INSERT INTO Bookings (BookingID, Date, TableNumber, CustomerID) VALUES
     (3, '2022-10-11', 2, 2),
     (4, '2022-10-13', 2, 1);
     
-SELECT * FROM Bookings;
+SELECT * FROM Bookings; */
 
 /* Task 2 */
 DELIMITER //
-CREATE PROCEDURE CheckBooking (IN bookingDate DATE, IN tableNo INT) 
+CREATE PROCEDURE CheckBooking (IN bookDate DATE, IN tableNo INT) 
 	BEGIN
 		DECLARE booked BOOLEAN;
         
         SELECT EXISTS (
 			SELECT BookingID 
             FROM Bookings
-            WHERE Date = bookingDate
+            WHERE BookingDate = bookDate
 				AND TableNumber = tableNo
 			) INTO booked;
 		
@@ -39,19 +39,19 @@ CALL CheckBooking ('2022-11-12', 3);
 
 /* Task 3 */
 DELIMITER //
-CREATE PROCEDURE IF NOT EXISTS AddValidBooking(IN bookingDate DATE, IN tableNo INT)
+CREATE PROCEDURE IF NOT EXISTS AddValidBooking(IN bookDate DATE, IN tableNo INT)
 	BEGIN
 		DECLARE booked BOOLEAN;
 		START TRANSACTION;
             SELECT EXISTS (
 				SELECT BookingID 
 				FROM Bookings
-				WHERE Date = bookingDate
+				WHERE BookingDate = bookDate
 					AND TableNumber = tableNo
 				) INTO booked;
         
-			INSERT INTO Bookings (Date, TableNumber) VALUES 
-				(bookingDate, tableNo);
+			INSERT INTO Bookings (BookingDate, TableNumber) VALUES 
+				(bookDate, tableNo);
 			
             IF booked THEN
 				SELECT CONCAT("Table ", tableNo, " is open - booking added") AS "Booking Status";
@@ -67,12 +67,12 @@ CALL AddValidBooking("2022-12-17", 6);
 
 /* Task 4 */
 DELIMITER //
-CREATE PROCEDURE IF NOT EXISTS AddBooking (IN id INT, custID INT, IN bookingDate DATE, IN tableNo INT)
+CREATE PROCEDURE IF NOT EXISTS AddBooking (IN id INT, custID INT, IN bookDate DATE, IN tableNo INT)
 	BEGIN
 		INSERT INTO Customers (CustomerID) VALUES 
 			(custID);
-		INSERT INTO bookings (BookingID, Date, TableNumber, CustomerID) VALUES
-			(id, bookingDate, tableNo, custID);
+		INSERT INTO bookings (BookingID, BookingDate, TableNumber, CustomerID) VALUES
+			(id, bookDate, tableNo, CustomerID);
 		SELECT CONCAT("New Booking Added") AS "Confirmation";
     END //
 DELIMITER ;
@@ -81,9 +81,9 @@ CALL AddBooking(9, 4, "2022-12-30", 3);
 
 /* Task 5 */
 DELIMITER //
-CREATE PROCEDURE IF NOT EXISTS UpdateBooking(IN id INT, IN bookingDate DATE)
+CREATE PROCEDURE IF NOT EXISTS UpdateBooking(IN id INT, IN bookDate DATE)
 	BEGIN
-		UPDATE Bookings SET Date = bookingDate WHERE BookingID = id;
+		UPDATE Bookings SET BookingDate = bookDate WHERE BookingID = id;
         SELECT CONCAT("Booking ", id, " updated") AS "Confirmation";
     END //
 DELIMITER ;
