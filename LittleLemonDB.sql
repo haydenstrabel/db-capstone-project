@@ -33,11 +33,10 @@ DEFAULT CHARACTER SET = utf8mb3;
 -- Table `littlelemondb`.`bookings`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `littlelemondb`.`bookings` (
-  `BookingID` INT NOT NULL,
+  `BookingID` INT AUTO_INCREMENT PRIMARY KEY,
   `Date` DATE NULL DEFAULT NULL,
   `TableNumber` INT NULL DEFAULT NULL,
   `CustomerID` INT NULL,
-  PRIMARY KEY (`BookingID`),
   INDEX `CustomerID_idx` (`CustomerID` ASC) VISIBLE,
   CONSTRAINT `CustomerID`
     FOREIGN KEY (`CustomerID`)
@@ -112,11 +111,6 @@ CREATE TABLE IF NOT EXISTS `littlelemondb`.`orders` (
   CONSTRAINT `BookingID`
     FOREIGN KEY (`BookingID`)
     REFERENCES `littlelemondb`.`bookings` (`BookingID`)
-    ON DELETE CASCADE
-    ON UPDATE CASCADE,
-  CONSTRAINT `CustomerID`
-    FOREIGN KEY (`CustomerID`)
-    REFERENCES `littlelemondb`.`customers` (`CustomerID`)
     ON DELETE CASCADE
     ON UPDATE CASCADE,
   CONSTRAINT `DeliveryID`
