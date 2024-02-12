@@ -4,7 +4,7 @@ USE LittleLemonDB;
 CREATE VIEW OrdersView AS
 	SELECT OrderID
 		, Quantity
-        , TotalCost
+        , Cost
 	FROM Orders
     WHERE Quantity > 2;
 
@@ -15,8 +15,8 @@ FROM OrdersView;
 SELECT Cust.CustomerID
 	, Cust.CustomerName
     , Ord.OrderID
-    , Ord.TotalCost
-    , Menu.MenuName
+    , Ord.Cost
+    , Menu.CuisineName
     , Items.CourseName
 FROM Orders AS Ord
 	INNER JOIN Customers AS Cust
@@ -27,7 +27,7 @@ FROM Orders AS Ord
 		ON Menu.ItemID = Items.ItemID;
 
 /* Task 3 */
-SELECT MenuName
+SELECT CuisineName
 FROM Menu
 WHERE MenuID > ANY(SELECT MenuID 
 					FROM Orders 
@@ -51,7 +51,7 @@ CALL GetMaxQuantity();
 PREPARE GetOrderDetail
 FROM 'SELECT OrderID
 			, Quantity
-			, TotalCost 
+			, Cost 
 		FROM Orders 
         WHERE OrderID = ?';
 
